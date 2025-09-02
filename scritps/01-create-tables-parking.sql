@@ -1,0 +1,57 @@
+CREATE SEQUENCE parking_sequence
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+CREATE TABLE Addresses (
+    Id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Street VARCHAR2(100) NOT NULL,
+    BuildingNumber VARCHAR2(10) NOT NULL,
+    Complement VARCHAR2(150),
+    Neighborhood VARCHAR2(100) NOT NULL,
+    FederativeUnit VARCHAR2(2) NOT NULL,
+    City VARCHAR2(100) NOT NULL,
+    ZipCode VARCHAR2(9) NOT NULL
+);
+
+CREATE TABLE Vehicles (
+    Id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    VehicleType VARCHAR2(10),
+    Brand VARCHAR2(50) NOT NULL,
+    Model VARCHAR2(50) NOT NULL,
+    Color VARCHAR2(50) NOT NULL,
+    VehicleYear NUMBER(4),
+    Notes VARCHAR2(200)
+);
+
+CREATE TABLE Customers (
+    Id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Name VARCHAR2(100) NOT NULL,
+    BirthDate DATE,
+    Cpf VARCHAR2(11) NOT NULL,
+    Phone VARCHAR2(15) NOT NULL,
+    Email VARCHAR2(100) NOT NULL,
+    AddressId NUMBER,
+    CONSTRAINT FK_Customers_Addresses FOREIGN KEY (AddressId) REFERENCES Addresses (Id)
+);
+
+CREATE TABLE CustomerVehicles (
+    Id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CustomerId NUMBER,
+    VehicleId NUMBER,
+    CONSTRAINT FK_CustomerVehicles_Customers FOREIGN KEY (CustomerId) REFERENCES Customers (Id),
+    CONSTRAINT FK_CustomerVehicles_Vehicles FOREIGN KEY (VehicleId) REFERENCES Vehicles (Id)
+);
+
+CREATE TABLE Stays (
+    Id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CustomerVehicleId NUMBER,
+    LicensePlate VARCHAR2(10) NOT NULL,
+    EntryDate TIMESTAMP,
+    ExitDate TIMESTAMP,
+    HourlyRate NUMBER(18,2) NOT NULL,
+    TotalAmount NUMBER(18,2),
+    StayStatus VARCHAR2(20),
+    CONSTRAINT FK_Stays_CustomerVehicles FOREIGN KEY (CustomerVehicleId) REFERENCES CustomerVehicles (Id)
+);
